@@ -1,0 +1,30 @@
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd; /* Adiciona uma borda ao container */
+    background-color: #f8f8f8; /* Cor de fundo clara */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+tr:nth-child(even) { /* Linhas pares com cor de fundo diferente */
+    background-color: #f2f2f2;
+}
+
+h3 { /* Estilo para o total */
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: right; /* Alinha o total à direita */
+}
