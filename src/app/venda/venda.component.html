@@ -1,0 +1,93 @@
+<div class="container">
+    <div class="header">
+        <h1>CAIXA ABERTO</h1>
+    </div>
+  
+    <div class="content-wrapper">
+        <div class="main-area">
+            <div class="item-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ITEM</th>
+                            <th>CÓDIGO</th>
+                            <th>DESCRIÇÃO</th>
+                            <th>QTDE</th>
+                            <th>VL. UNIT.</th>
+                            <th>SUBTOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of carrinho; let i = index" (click)="selecionarProduto(item.produto)">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ item.produto.codigoBarras }}</td>
+                            <td>{{ item.produto.descricao }}</td>
+                            <td>{{ item.quantidade }}</td>
+                            <td>{{ item.produto.valorUnitario | currency: 'BRL' }}</td>
+                            <td>{{ (item.produto.valorUnitario * item.quantidade) | currency: 'BRL' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+  
+        <div class="sidebar">
+          <!-- Exibe a imagem do produto selecionado -->
+          <div class="product-image" *ngIf="produtoSelecionado?.imagem">
+              <img [src]="produtoSelecionado.imagem" alt="Foto do Produto">
+          </div>
+          <div class="product-image no-image" *ngIf="!produtoSelecionado?.imagem">
+              <img src="assets/img_padrao.png" alt="Imagem padrão">
+          </div>        
+  
+          <div class="product-details">
+              <div class="input-add">
+                  <input type="text" [(ngModel)]="codigoBarras" placeholder="Código de Barras" (keyup.enter)="adicionarProduto()">
+              </div>
+              <div class="product-details-row">
+                  <div class="product-details-column">
+                      <label for="quantidade">Quantidade:</label>
+                      <input id="quantidade" type="text" [value]="produtoSelecionado ? produtoSelecionado.quantidade || 1 : 1" readonly>
+                  </div>                
+                  <div class="product-details-column">
+                      <label for="preco">Preço:</label>
+                      <input id="preco" type="text" [value]="produtoSelecionado ? (produtoSelecionado.valorUnitario | currency: 'BRL') : ''" readonly>
+                  </div>
+                  <div class="product-details-column">
+                      <label for="subtotal">Subtotal:</label>
+                      <input id="subtotal" type="text" [value]="produtoSelecionado ? ((produtoSelecionado.valorUnitario * (produtoSelecionado.quantidade || 1)) | currency: 'BRL') : ''" readonly>
+                  </div>
+              </div>
+          </div>
+  
+          <div class="sidebar-total">
+              <div class="product-total">
+                  <label for="Total">Total:</label>
+                  <input id="Total" type="text" [value]="calcularTotal() | currency: 'BRL' " readonly>
+              </div>              
+          </div>
+      </div> 
+    </div>
+  
+    <div class="footer">
+      <div class="footer-content">
+          <div class="footer-column">
+              <p>OPERADOR</p>
+              <p>F12 - NFC-e</p>
+          </div>
+          <div class="footer-column">
+              <p>F2 - CONSULTAR ITEM</p>
+              <p>F3 - CANCELAR CUPOM</p>
+          </div>
+          <div class="footer-column">
+              <p>F5 - QUANTIDADE</p>
+              <p>F6 - DESCONTO</p>
+          </div>
+          <div class="footer-column">
+              <p>F7 - CLIENTES</p>
+              <p>F8 - MENU</p>
+          </div>
+          <button class="receive-button" (click)="encerrarVenda()">F10 - ENCERRAR VENDA</button>
+      </div>
+    </div>  
+  </div>  

@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: 99vw;
+    height: 98vh;
+    max-width: 1900px;
+    max-height: 1000px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    display: flex; /* Usando flexbox no container */
+    flex-direction: column;
+    flex-grow: 1; /* Para o container ocupar o espaço disponível */
+}
+
+.header {
+    font-family: 'Roboto', sans-serif;
+    background-color: #00A300;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    height: 50px; /* Reduzindo a altura do header */
+}
+
+.content-wrapper {
+    display: flex;
+    flex-grow: 1; /* Permite que o conteúdo cresça */
+    padding: 10px;
+    gap: 20px;
+    overflow: hidden;
+    /* Cálculo dinâmico da altura */
+    height: calc(100vh - 15vh - 75px - 70px); /* 100vh - footer - margem - header */
+}
+
+.main-area {
+    font-family: 'Roboto', sans-serif;
+    flex: 2;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.item-list {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: none;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #d4edda;
+    font-weight: bold;
+    text-align: center;
+}
+
+td {
+    text-align: center; /* Alinha a maioria das células à esquerda */
+}
+
+td:nth-child(5), /* VL. UNIT. */
+td:nth-child(6) { /* SUBTOTAL */
+    text-align: right; /* Alinha os números à direita */
+}
+
+.sidebar {
+    flex: 1;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.product-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    height: 500px; /* Espaço fixo reservado para imagem ou mensagem */
+    box-sizing: border-box; /* Garante que padding e bordas sejam incluídos no tamanho total */
+    background-color: #f9f9f9; /* Cor para destacar o espaço */
+    position: relative; /* Para impedir mudanças no layout */
+    overflow: hidden; /* Evita que conteúdos maiores que o contêiner o ultrapassem */
+}
+
+.product-image img {
+    max-width: 100%; /* A largura da imagem não ultrapassa o contêiner */
+    max-height: 100%; /* A altura da imagem não ultrapassa o contêiner */
+    object-fit: contain; /* Ajusta a imagem proporcionalmente dentro do contêiner */
+    display: block; /* Remove espaços extras ao redor da imagem */
+}
+
+.product-image.no-image {
+    font-size: 16px;
+    color: #999;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.product-details {
+    display: flex;
+    flex-direction: column; /* Organiza o conteúdo em colunas (uma em cima da outra) */
+    gap: 10px; /* Espaçamento entre as linhas */
+}
+
+.input-add {
+    margin-bottom: 10px; /* Adiciona espaço abaixo do input */
+    padding: 0px; /* Adiciona espaço interno ao redor do input */
+}
+
+.input-add input {
+    font-size: 1.2em;
+    font-weight: bold;
+    border: 2px solid #007bff;
+    padding: 8px; /* Ajusta o espaçamento interno para conforto visual */
+    border-radius: 4px;
+    width: 100%; /* Certifica que o input ocupa toda a largura disponível */
+    box-sizing: border-box; /* Inclui padding e borda no cálculo da largura */
+}
+.product-details-row {
+    display: flex;
+    flex-direction: row; /* Alinha os campos na mesma linha */
+    gap: 15px; /* Espaçamento entre os campos */
+    align-items: flex-start; /* Alinha os campos no topo */
+}
+
+.product-details-column {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding-right: 5px;
+}
+
+.product-details-column label {
+    font-family: 'Roboto', sans-serif;
+    margin-bottom: 5px;
+}
+
+.product-details-column input {
+    width: 100%;
+    padding: 5px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-align: right;
+}
+
+
+.add-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    border: 2px solid #007bff;
+    cursor: pointer;
+    height: fit-content;
+    width: 33%; /* Ajustando a largura do botão */
+    box-sizing: border-box; /* Incluindo padding e border na largura total */
+}
+
+.valor-unitario {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+
+.sidebar-total {
+    font-family: 'Roboto', sans-serif;
+    margin-top: auto;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f4f4f4; /* Cor de fundo para o container */
+}
+
+.product-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#Total {
+    text-align: right; /* Alinha o texto à direita */
+    font-size: 1.5rem; /* Aumenta o tamanho da fonte */
+    font-weight: bold; /* Deixa o texto em negrito */
+    background-color: transparent; /* Remove a cor de fundo */
+    border: none; /* Remove a borda */
+    padding: 8px; /* Padding para espaçamento */
+    color: #333; /* Cor do texto */
+    width: 100%; /* Faz o input ocupar toda a largura disponível */
+    box-sizing: border-box; /* Ajusta o box model para não quebrar o layout */
+}
+
+.footer {
+    font-family: 'Roboto', sans-serif;
+    background-color: #008000;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    bottom: 0;
+    left: 0;
+    height: 70px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    line-height: 0.1; /* Diminuindo o espaçamento entre as linhas */
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* Reduzindo o espaçamento vertical entre os textos */
+    text-align: left;
+}
+
+.receive-button {
+    background-color: white;
+    color: #007bff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: large;
+    border: 2px solid white;
+    cursor: pointer;
+    height: fit-content;
+    width: 33%; /* Ajustando a largura do botão */
+    box-sizing: border-box; /* Incluindo padding e border na largura total */
+    pointer-events: auto !important; /* ✅ Garante que pode ser clicado */
+    opacity: 1 !important; /* ✅ Evita aparência de desativado */
+}
+
