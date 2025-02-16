@@ -1,57 +1,50 @@
 import { Injectable } from '@angular/core';
-import { Observable, from } from 'rxjs'; 
+import { SQLiteDatabaseService } from './sqlite-database.service';
 import { Produto } from '../models/produto.model';
 import { Venda } from '../models/venda.model';
-import { IndexedDBService } from './indexeddb.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VendaService {
-  constructor(private indexedDBService: IndexedDBService) {}
+  constructor(private dbService: SQLiteDatabaseService) {}
 
-  /** Registra uma venda no IndexedDB */
-  async registrarVenda(produtos: Produto[], total: number): Promise<void> {
-    const db = await this.indexedDBService.getDB();
-    const venda: Venda = {
-      id: Date.now(),
-      produtos,
-      total,
-      data: new Date().toISOString()
-    };
-
-    const tx = db.transaction('vendas', 'readwrite');
-    await tx.objectStore('vendas').put(venda);
-    await tx.done;
-
-    console.log("✅ Venda registrada com sucesso!", venda);
+  async registrarVenda(produtos: { produto: Produto; quantidade: number }[], total: number): Promise<void> {
+    const dataAtual = new Date().toISOString();
+    try {
+      // Inserir a venda e obter o ID gerado
+      const vendaId = await this.dbService.insert(
+        "INSERT INTO venda (total, data) VALUES (?, ?)",
+        [total, dataAtual]
+      );
+      
+      // Inserir os produtos da venda
+      for (const item of produtos) {
+        await this.dbService.insert(
+          "INSERT INTO venda_produtos (venda_id, produto_id, quantidade, subtotal) VALUES (?, ?, ?, ?)",
+          [vendaId, item.produto.id, item.quantidade, item.produto.valorUnitario * item.quantidade]
+        );
+      }
+      console.log("🛒 Venda registrada com sucesso!");
+    } catch (error) {
+      console.error("Erro ao registrar venda:", error);
+    }
   }
 
-  /** Obtém todas as vendas registradas */
-  async obterVendas(): Promise<Venda[]> {
-    const db = await this.indexedDBService.getDB();
-    return await db.getAll('vendas');
+  async buscarVendas(): Promise<Venda[]> {
+    const vendas = await this.dbService.select<Venda>("SELECT * FROM venda");
+    for (const venda of vendas) {
+      venda.produtos = await this.buscarProdutosDaVenda(venda.id);
+    }
+    return vendas;
   }
 
-  /** 
-   * * TO-DO: retirar ess emétodo daqui e colocar em ProdutoService
-   * Busca um produto pelo código de barras */
-  buscarProdutoPorCodigo(codigo: string): Observable<Produto | undefined> {
-    const buscaProduto = async () => {
-      const db = await this.indexedDBService.getDB();
-      return db.get('produtos', codigo);
-    };
-    return from(buscaProduto()); 
+  private async buscarProdutosDaVenda(vendaId: number): Promise<Produto[]> {
+    return this.dbService.select<Produto>(
+      `SELECT p.* FROM venda_produtos vp 
+       JOIN produtos p ON vp.produto_id = p.id 
+       WHERE vp.venda_id = ?`,
+      [vendaId]
+    );
   }
-
-  /** 
-   * TO-DO: retirar ess emétodo daqui e colocar em ProdutoService
-   * Retorna todos os produtos do IndexedDB */
-  buscarProdutos(): Observable<Produto[]> {
-    const buscaProdutos = async () => {
-      const db = await this.indexedDBService.getDB();
-      return db.getAll('produtos');
-    };
-    return from(buscaProdutos()); 
-  }  
 }

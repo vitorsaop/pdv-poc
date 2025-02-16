@@ -1,5 +1,6 @@
-import { Component, ChangeDetectorRef, HostListener} from '@angular/core';
+import { Component, ChangeDetectorRef, HostListener } from '@angular/core';
 import { VendaService } from '../services/venda.service';
+import { ProdutoService } from '../services/produto.service'; // Importação correta
 import { Produto } from '../models/produto.model';
 
 interface ItemCarrinho {
@@ -17,25 +18,29 @@ export class VendaComponent {
     carrinho: ItemCarrinho[] = [];
     produtoSelecionado: Produto | null = null;
 
-    constructor(private vendaService: VendaService, private cdr: ChangeDetectorRef) { }
+    constructor(
+        private vendaService: VendaService, 
+        private produtoService: ProdutoService,  // Injetando ProdutoService
+        private cdr: ChangeDetectorRef
+    ) { }
 
     @HostListener('document:keydown', ['$event'])
     handleKeyboardEvent(event: KeyboardEvent) {
         switch (event.key) {
-        case "F10":
-            event.preventDefault(); 
-            this.encerrarVenda();
-            break;
-        case "F2":
-            event.preventDefault();
-            alert("Consulta de item (F2) acionada!");
-            break;
-        case "F3":
-            event.preventDefault();
-            console.log("F3 clicado!");
-            break;
-        default:
-            break;
+            case "F10":
+                event.preventDefault(); 
+                this.encerrarVenda();
+                break;
+            case "F2":
+                event.preventDefault();
+                alert("Consulta de item (F2) acionada!");
+                break;
+            case "F3":
+                event.preventDefault();
+                console.log("F3 clicado!");
+                break;
+            default:
+                break;
         }
     }
 
@@ -45,22 +50,21 @@ export class VendaComponent {
             return;
         }
 
-        this.vendaService.buscarProdutoPorCodigo(this.codigoBarras).subscribe(produto => {
+        this.produtoService.buscarProdutoPorCodigo(this.codigoBarras).then(produto => {
             if (produto) {
-              let itemNoCarrinho = this.carrinho.find(item => item.produto.codigoBarras === produto.codigoBarras);
-              if (itemNoCarrinho) {
-                itemNoCarrinho.quantidade++;
-              } else {
-                this.carrinho.push({ produto, quantidade: 1 });
-              }
-              this.produtoSelecionado = produto;
+                let itemNoCarrinho = this.carrinho.find(item => item.produto.codigoBarras === produto.codigoBarras);
+                if (itemNoCarrinho) {
+                    itemNoCarrinho.quantidade++;
+                } else {
+                    this.carrinho.push({ produto, quantidade: 1 });
+                }
+                this.produtoSelecionado = produto;
             } else {
-              alert('Produto não encontrado!');
+                alert('Produto não encontrado!');
             }
-      
+
             this.codigoBarras = '';
-          });
-        
+        }).catch(error => console.error("Erro ao buscar produto:", error));
     }
 
     removerProduto(codigoBarras: string) {
@@ -75,34 +79,29 @@ export class VendaComponent {
         this.produtoSelecionado = produto;
     }    
 
-  /** Finaliza a venda e salva no IndexedDB */
-  async encerrarVenda() {
-    
-    console.log("Botão F10 clicado! Encerrando venda...");
+    async encerrarVenda() {
+        console.log("Botão F10 clicado! Encerrando venda...");
 
-    if (this.carrinho.length === 0) {
-      alert("O carrinho está vazio!");
-      return;
+        if (this.carrinho.length === 0) {
+            alert("O carrinho está vazio!");
+            return;
+        }
+
+        const total = this.calcularTotal();
+        const produtosVendidos = this.carrinho.map(item => ({
+            produto: item.produto, 
+            quantidade: item.quantidade
+        }));
+
+        await this.vendaService.registrarVenda(produtosVendidos, total);
+        this.limparTela();
+    }    
+
+    limparTela() {
+        this.carrinho = [];
+        this.produtoSelecionado = null;
+        this.codigoBarras = '';
+
+        this.cdr.detectChanges(); // Força a atualização da tela
     }
-
-    const total = this.calcularTotal();
-    const produtosVendidos = this.carrinho.map(item => ({
-      ...item.produto,
-      quantidade: item.quantidade
-    }));
-
-    await this.vendaService.registrarVenda(produtosVendidos, total);
-
-    this.limparTela();
-  }    
-
-  limparTela() {
-    this.carrinho = [];
-    this.produtoSelecionado = null;
-    this.codigoBarras = '';
-
-    this.cdr.detectChanges(); // Força a atualização da tela
-    
-  }
-
 }
